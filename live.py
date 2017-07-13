@@ -33,6 +33,9 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 
     print("Found {0} faces!".format(len(faces)))
 
+    if(len(faces)>0):
+        cv2.imwrite('foundFaces.png',image)
+
     # Draw a rectangle around the faces
     for (x, y, w, h) in faces:
         cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
