@@ -1,0 +1,56 @@
+# This script will detect faces via your webcam.
+# Tested with OpenCV3
+
+import cv2
+#from picamera.array import PiRGBArray
+#from picamera import PiCamera
+import time
+
+# camera = PiCamera()
+# camera.resolution = (640,480)
+# camera.framerate = 32
+cap = cv2.VideoCapture(0)
+# rawCapture = PiRGBArray(camera, size=(640,480))
+
+time.sleep(0.1)
+
+# Create the haar cascade
+faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+
+#for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+ret = True
+while(ret):
+    ret, frame = cap.read()
+    image = frame
+#    image = frame.array
+
+    # Our operations on the frame come here
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Detect faces in the image
+    faces = faceCascade.detectMultiScale(
+        gray,
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(30, 30)
+        #flags = cv2.CV_HAAR_SCALE_IMAGE
+    )
+
+    print("Found {0} faces!".format(len(faces)))
+
+    if(len(faces)>0):
+        cv2.imwrite('foundFaces.png',image)
+
+    # Draw a rectangle around the faces
+    for (x, y, w, h) in faces:
+        cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+
+    #rawCapture.truncate(0)
+
+    # Display the resulting frame
+    cv2.imshow('frame', image)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# When everything done, release the capture
+cv2.destroyAllWindows()
